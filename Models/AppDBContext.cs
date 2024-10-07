@@ -15,5 +15,7 @@ namespace Administration.Models
         public DbSet<Fournisseur> Fournisseurs { get; set; }
         public DbSet<Societe> Societes { get; set; }
         public DbSet<Utilisateur> Utilisateurs { get; set; }
+        public DbSet<FactureVente> FacturesVente { get;set; }
+        public DbSet<LigneFacture> LignesFacture { get; set; }
     }
 }

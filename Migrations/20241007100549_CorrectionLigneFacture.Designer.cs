@@ -4,6 +4,7 @@ using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241007100549_CorrectionLigneFacture")]
+    partial class CorrectionLigneFacture
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,12 +199,17 @@ namespace Administration.Migrations
                     b.Property<int>("Quantite")
                         .HasColumnType("int");
 
+                    b.Property<int>("ServiceID_Service")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Total_LigneFV")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID_LigneFV");
 
                     b.HasIndex("FactureVenteID_FactureVente");
+
+                    b.HasIndex("ServiceID_Service");
 
                     b.ToTable("LignesFacture");
                 });
@@ -523,6 +531,14 @@ namespace Administration.Migrations
                     b.HasOne("Administration.Models.FactureVente", null)
                         .WithMany("LignesFacture")
                         .HasForeignKey("FactureVenteID_FactureVente");
+
+                    b.HasOne("Administration.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceID_Service")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

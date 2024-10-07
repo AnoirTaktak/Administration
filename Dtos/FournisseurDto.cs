@@ -9,11 +9,7 @@ namespace Administration.Dtos
         [Required]
         [StringLength(100)]
         public required string RaisonSociale_Fournisseur { get; set; }
-        /// <summary>
-        /// Matricule Fiscale du fournisseur.
-        /// </summary>
         [Required]
-        [StringLength(20)]
         public int MF_Fournisseur { get; set; }
         [Required]
         [EmailAddress(ErrorMessage = "Le format de l'adresse e-mail est invalide.")]

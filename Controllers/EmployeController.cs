@@ -36,7 +36,7 @@ namespace Administration.Controllers
         }
         [Authorize(Roles = "Admin, SuperAdmin")]
         [HttpPost]
-        public async Task<IActionResult> CreateEmployeAsync(EmployeDto employeDto)
+        public async Task<IActionResult> CreateEmployeAsync(Employe employeDto)
         {
             var employe = new Employe
             {
@@ -52,7 +52,7 @@ namespace Administration.Controllers
             };
 
             await _employe_Service.AddEmploye(employe);
-            return CreatedAtAction(nameof(GetEmployeByIdAsync), new { id = employe.ID_Employe }, employe);
+            return Ok(employe);
         }
         [Authorize(Roles = "Admin, SuperAdmin")]
         [HttpPut("{id}")]

@@ -28,6 +28,8 @@ builder.Services.AddTransient<IFournisseur_Service, Fournisseur_Service>();
 builder.Services.AddTransient<IEmploye_Service, Employe_Service>();
 builder.Services.AddTransient<IClient_Service, Client_Service>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddTransient<IFactureVente_Service, FactureVente_Service>();
+builder.Services.AddTransient<ILigneFactureService, LigneFactureService>();
 
 builder.Services.AddCors();
 

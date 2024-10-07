@@ -4,6 +4,7 @@ using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241005153041_AjoutFacturesEtLignes")]
+    partial class AjoutFacturesEtLignes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,6 +159,7 @@ namespace Administration.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MF_Fournisseur")
+                        .HasMaxLength(20)
                         .HasColumnType("int");
 
                     b.Property<string>("RaisonSociale_Fournisseur")
@@ -184,16 +188,22 @@ namespace Administration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_LigneFV"));
 
-                    b.Property<int?>("FactureVenteID_FactureVente")
+                    b.Property<int>("FactureVenteID_FactureVente")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ID_FactureVente")
+                    b.Property<int>("ID_FactureVente")
                         .HasColumnType("int");
 
                     b.Property<int>("ID_Service")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("PrixUnitaire")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("Quantite")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceID_Service")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Total_LigneFV")
@@ -202,6 +212,8 @@ namespace Administration.Migrations
                     b.HasKey("ID_LigneFV");
 
                     b.HasIndex("FactureVenteID_FactureVente");
+
+                    b.HasIndex("ServiceID_Service");
 
                     b.ToTable("LignesFacture");
                 });
@@ -520,9 +532,21 @@ namespace Administration.Migrations
 
             modelBuilder.Entity("Administration.Models.LigneFacture", b =>
                 {
-                    b.HasOne("Administration.Models.FactureVente", null)
+                    b.HasOne("Administration.Models.FactureVente", "FactureVente")
                         .WithMany("LignesFacture")
-                        .HasForeignKey("FactureVenteID_FactureVente");
+                        .HasForeignKey("FactureVenteID_FactureVente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Administration.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceID_Service")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FactureVente");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

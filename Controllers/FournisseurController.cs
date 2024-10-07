@@ -36,7 +36,7 @@ namespace Administration.Controllers
         }
         [Authorize(Roles = "Admin, SuperAdmin")]
         [HttpPost]
-        public async Task<IActionResult> CreateFournisseurAsync(FournisseurDto fournisseur)
+        public async Task<IActionResult> CreateFournisseurAsync(Fournisseur fournisseur)
         {
             var frn = new Fournisseur
             {
@@ -48,7 +48,7 @@ namespace Administration.Controllers
                 Type_Fournisseur = fournisseur.Type_Fournisseur
             };
             var createdFournisseur = await _fournisseur_Service.AddFournisseur(frn);
-            return CreatedAtAction(nameof(GetFournisseurByIdAsync), new { id = createdFournisseur.ID_Fournisseur }, createdFournisseur);
+            return Ok(fournisseur);
         }
 
         [HttpPut("{id}")]
@@ -70,6 +70,8 @@ namespace Administration.Controllers
             _fournisseur_Service.UpdateFournisseur(existingFournisseur);
             return Ok(existingFournisseur);
         }
+
+
         [Authorize(Roles = "SuperAdmin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFournisseurAsync(int id)

@@ -1,4 +1,5 @@
-﻿using Administration.Models;
+﻿using Administration.Dtos;
+using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Administration.Services

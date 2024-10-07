@@ -51,16 +51,18 @@ namespace Administration.Controllers
         {
             var client = new Client
             {
+                Adresse_Client = clientDto.Adresse_Client,
                 MF_Client = clientDto.MF_Client,
                 RS_Client = clientDto.RS_Client,
-                Adresse_Client = clientDto.Adresse_Client,
                 Tel_Client = clientDto.Tel_Client,
                 Type_Client = clientDto.Type_Client,
             };
 
             await _client_Service.AddClient(client);
-            return CreatedAtAction(nameof(GetClientByIdAsync), new { id = client.ID_Client }, client);
+            return Ok(client);
         }
+
+
         [Authorize(Roles = "Admin, SuperAdmin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateClientAsync(int id, ClientDto clientDto)
@@ -68,18 +70,18 @@ namespace Administration.Controllers
             var client = await _client_Service.GetClientById(id);
             if (client == null)
             {
-                return NotFound("Client introuvable");
+                return NotFound(" Client Introuvable ");
             }
-
+            client.Adresse_Client = clientDto.Adresse_Client;
             client.MF_Client = clientDto.MF_Client;
             client.RS_Client = clientDto.RS_Client;
-            client.Adresse_Client = clientDto.Adresse_Client;
             client.Tel_Client = clientDto.Tel_Client;
             client.Type_Client = clientDto.Type_Client;
 
             _client_Service.UpdateClient(client);
             return Ok(client);
         }
+
         [Authorize(Roles = "SuperAdmin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClientAsync(int id)

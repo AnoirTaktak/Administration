@@ -5,6 +5,9 @@ namespace Administration.Dtos
     public class ClientDto
     {
         [Required]
+        public int ID_Client { get; set; }  // Ajoute cette propriété pour correspondre à l'ID du client
+
+        [Required]
         [StringLength(20)]
         public required string MF_Client { get; set; } // Matricule Fiscale
 
