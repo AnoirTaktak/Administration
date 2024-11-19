@@ -1,6 +1,6 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
+using Administration.Services.Employe;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,14 +16,16 @@ namespace Administration.Controllers
         {
             _employe_Service = employe_Service;
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        
+
         [HttpGet]
         public async Task<IActionResult> GetAllEmployesAsync()
         {
             var employes = await _employe_Service.GetAllEmployes();
             return Ok(employes);
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployeByIdAsync(int id)
         {
@@ -34,7 +36,44 @@ namespace Administration.Controllers
             }
             return Ok(employe);
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+
+
+        [HttpGet("nom/{nom}")]
+        public async Task<IActionResult> GetClientByNomAsync(string nom)
+        {
+            var employes = await _employe_Service.GetEmployeByNom(nom);
+            if (employes == null)
+            {
+                return NotFound("Employé introuvable");
+            }
+            return Ok(employes);
+        }
+
+        [HttpGet("cin/{cin}")]
+        public async Task<IActionResult> GetClientByCinAsync(string cin)
+        {
+            var employes = await _employe_Service.GetEmployeByCin(cin);
+            if (employes == null)
+            {
+                return NotFound("Client introuvable");
+            }
+            return Ok(employes);
+        }
+
+
+        [HttpGet("typecontrat/{tc}")]
+        public async Task<IActionResult> GetClientByTCAsync(TypeContrat tc)
+        {
+            var employes = await _employe_Service.GetEmployesByTypeContrat(tc);
+            if (employes == null)
+            {
+                return NotFound("Client introuvable");
+            }
+            return Ok(employes);
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> CreateEmployeAsync(Employe employeDto)
         {
@@ -51,10 +90,18 @@ namespace Administration.Controllers
                 Poste_Employe = employeDto.Poste_Employe,
             };
 
-            await _employe_Service.AddEmploye(employe);
-            return Ok(employe);
+            var result =  await _employe_Service.AddEmploye(employe);
+
+            // Si un message d'erreur est retourné, renvoyer un code 400 avec le message d'erreur
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+
+            return Ok($"L'employee '{employe.Nom_Employe}' a été ajouté avec succès.");
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEmployeAsync(int id, EmployeDto employeDto)
         {
@@ -74,10 +121,18 @@ namespace Administration.Controllers
             employe.CNSS_Employe = employeDto.CNSS_Employe;
             employe.Poste_Employe = employeDto.Poste_Employe;
 
-            _employe_Service.UpdateEmploye(employe);
-            return Ok(employe);
+            var result = _employe_Service.UpdateEmploye(employe);
+
+            // Si un message d'erreur est retourné, renvoyer un code 400 avec le message d'erreur
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+
+            return Ok($"L'employee : '{employe.Nom_Employe}' a été modifié avec succès.");
         }
-        [Authorize(Roles = "SuperAdmin")]
+        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployeAsync(int id)
         {
@@ -87,7 +142,7 @@ namespace Administration.Controllers
                 return NotFound("Employé introuvable pour suppression");
             }
             _employe_Service.DeleteEmploye(employe);
-            return NoContent(); // 204 No Content
+            return Ok($"L'employee : '{employe.Nom_Employe}' a été supprimé avec succès.");
         }
     }
 }

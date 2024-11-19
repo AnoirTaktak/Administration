@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "XjjVAGr+zDNswSOOhZqgcLEgyjpjzS021MwpNV7uTlMuk6Wk9/TOOMyNAr5smkG+FZjlQ6Ma6ftm0EtiJe600g==",
+  "dgSpecHash": "59wL4yU2Jt1feAJBSbbWHk128IxeZFgkEjYRkhy3nkEQIJ1i0lKcA7U1REuPy+cPHpdMQ10bRR/KWLH4rbvYDQ==",
   "success": true,
   "projectFilePath": "D:\\2 eme genie log\\PFE\\Administration\\Administration\\Administration.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Msi\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\Msi\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Msi\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\Msi\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Msi\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Msi\\.nuget\\packages\\jwt\\10.1.1\\jwt.10.1.1.nupkg.sha512",
     "C:\\Users\\Msi\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

@@ -1,6 +1,6 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
+using Administration.Services.Utilisateur;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -23,7 +23,7 @@ namespace Administration.Controllers
             _configuration = configuration;
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        
         [HttpGet]
         public async Task<IActionResult> GetAllUtilisateursAsync()
         {
@@ -31,7 +31,8 @@ namespace Administration.Controllers
             return Ok(utilisateurs);
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+       
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUtilisateurByIdAsync(int id)
         {
@@ -39,20 +40,22 @@ namespace Administration.Controllers
             return Ok(utilisateur);
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+    
+
         [HttpPost]
         public async Task<IActionResult> CreateUtilisateurAsync(UtilisateurDto utilisateurDto)
         {
             var utilisateur = new Utilisateur
             {
                 Nom_Utilisateur = utilisateurDto.Nom_Utilisateur,
+                Pseudo = utilisateurDto.Pseudo,
                 Email_Utilisateur = utilisateurDto.Email_Utilisateur,
-                MotDePasse_Utilisateur = utilisateurDto.MotDePasse,
-                Role_Utilisateur = utilisateurDto.Role
+                MotDePasse_Utilisateur = utilisateurDto.MotDePasse_Utilisateur,
+                Role_Utilisateur = utilisateurDto.Role_Utilisateur
             };
 
             await _utilisateurService.AddUtilisateur(utilisateur);
-            return Ok(utilisateur);
+            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été ajouté avec succès.");
         }
 
         [Authorize]
@@ -66,12 +69,13 @@ namespace Administration.Controllers
             }
 
             utilisateur.Nom_Utilisateur = utilisateurDto.Nom_Utilisateur;
+            utilisateur.Pseudo = utilisateurDto.Pseudo;
             utilisateur.Email_Utilisateur = utilisateurDto.Email_Utilisateur;
-            utilisateur.MotDePasse_Utilisateur = utilisateurDto.MotDePasse;
-            utilisateur.Role_Utilisateur = utilisateurDto.Role;
+            utilisateur.MotDePasse_Utilisateur = utilisateurDto.MotDePasse_Utilisateur;
+            utilisateur.Role_Utilisateur = utilisateurDto.Role_Utilisateur;
 
             _utilisateurService.UpdateUtilisateur(utilisateur);
-            return Ok(utilisateur);
+            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été modifié avec succès.");
         }
 
         [Authorize(Roles = "Admin, SuperAdmin")]
@@ -85,7 +89,8 @@ namespace Administration.Controllers
             }
 
             _utilisateurService.DeleteUtilisateur(utilisateur);
-            return Ok(utilisateur);
+            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été supprimé avec succès.");
+
         }
 
 
@@ -94,9 +99,9 @@ namespace Administration.Controllers
         public async Task<IActionResult> Authenticate(UtilisateurDto utilisateurDto)
         {
             var utilisateur = await _utilisateurService.GetUtilisateurByUsername(utilisateurDto.Nom_Utilisateur);
-            if (utilisateur == null || utilisateur.MotDePasse_Utilisateur != utilisateurDto.MotDePasse)
+            if (utilisateur == null || utilisateur.MotDePasse_Utilisateur != utilisateurDto.MotDePasse_Utilisateur)
             {
-                return Unauthorized("Nom d'utilisateur ou mot de passe incorrect.");
+                return NotFound("Nom d'utilisateur ou mot de passe incorrect.");
             }
 
             // Création du token JWT

@@ -1,6 +1,6 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
+using Administration.Services.FactureVente;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers

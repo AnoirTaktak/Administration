@@ -1,6 +1,6 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
+using Administration.Services.Fournisseur;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,14 +16,16 @@ namespace Administration.Controllers
         {
             _fournisseur_Service = fournisseur_Service;
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+
+
         [HttpGet]
         public async Task<IActionResult> GetAllFournisseursAsync()
         {
             var fournisseurs = await _fournisseur_Service.GetAllFournisseurs();
             return Ok(fournisseurs);
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFournisseurByIdAsync(int id)
         {
@@ -34,7 +36,8 @@ namespace Administration.Controllers
             }
             return Ok(fournisseur);
         }
-        [Authorize(Roles = "Admin, SuperAdmin")]
+
+
         [HttpPost]
         public async Task<IActionResult> CreateFournisseurAsync(Fournisseur fournisseur)
         {
@@ -47,8 +50,20 @@ namespace Administration.Controllers
                 Tel_Fournisseur = fournisseur.Tel_Fournisseur,
                 Type_Fournisseur = fournisseur.Type_Fournisseur
             };
-            var createdFournisseur = await _fournisseur_Service.AddFournisseur(frn);
-            return Ok(fournisseur);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Retourne les erreurs de validation si le modèle est incorrect
+            }
+
+            var result = await _fournisseur_Service.AddFournisseur(frn);
+
+            // Si un message d'erreur est retourné, renvoyer un code 400 avec le message d'erreur
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+
+            return Ok($"Le fournisseur : '{frn.RaisonSociale_Fournisseur}' a été crée avec succès.");
         }
 
         [HttpPut("{id}")]
@@ -67,12 +82,17 @@ namespace Administration.Controllers
             existingFournisseur.RaisonSociale_Fournisseur = fournisseur.RaisonSociale_Fournisseur;
             existingFournisseur.Type_Fournisseur = fournisseur.Type_Fournisseur;
             
-            _fournisseur_Service.UpdateFournisseur(existingFournisseur);
-            return Ok(existingFournisseur);
+            var result = _fournisseur_Service.UpdateFournisseur(existingFournisseur);
+            // Si un message d'erreur est retourné, renvoyer un code 400 avec le message d'erreur
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+            return Ok($"Le fournisseur : '{existingFournisseur.RaisonSociale_Fournisseur}' a été modifié avec succès.");
         }
 
 
-        [Authorize(Roles = "SuperAdmin")]
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFournisseurAsync(int id)
         {
@@ -81,14 +101,28 @@ namespace Administration.Controllers
             {
                 return NotFound("Fournisseur introuvable pour suppression");
             }
+
             _fournisseur_Service.DeleteFournisseur(fournisseur);
-            return NoContent(); // 204 No Content
+            return Ok($"Le fournisseur : '{fournisseur.RaisonSociale_Fournisseur}' a été supprimé avec succès.");
         }
+
 
         [HttpGet("rs/{rs}")]
         public async Task<IActionResult> GetFournisseurByRSAsync(string rs)
         {
             var fournisseur = await _fournisseur_Service.GetFournisseurByRS(rs);
+            if (fournisseur == null)
+            {
+                return NotFound("Fournisseur introuvable");
+            }
+            return Ok(fournisseur);
+        }
+
+
+        [HttpGet("mf/{mf}")]
+        public async Task<IActionResult> GetFournisseurByMFAsync(string mf)
+        {
+            var fournisseur = await _fournisseur_Service.GetFournisseurByMF(mf);
             if (fournisseur == null)
             {
                 return NotFound("Fournisseur introuvable");

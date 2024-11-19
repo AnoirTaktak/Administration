@@ -13,7 +13,7 @@ namespace Administration.Models
 
         public decimal Total_FactureVente { get; set; }
 
-        public decimal TimbreFiscale { get; set; }
+        public decimal TimbreFiscale  { get; set; }
 
         // Relations
         [Required]

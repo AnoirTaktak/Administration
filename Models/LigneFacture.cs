@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-
 namespace Administration.Models
 {
     public class LigneFacture
@@ -12,6 +11,6 @@ namespace Administration.Models
         public int? ID_FactureVente { get; set; }
         public int Quantite { get; set; }
         public decimal Total_LigneFV { get; set; }
+        public decimal Total_LigneHT { get; set; }
     }
-
 }

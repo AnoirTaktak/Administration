@@ -1,4 +1,5 @@
-﻿using Administration.Services;
+﻿using Administration.Services.Auth;
+using Administration.Services.Utilisateur;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -23,4 +24,6 @@ public class AuthController : ControllerBase
         var token = _authService.GenerateToken(user.ID_Utilisateur.ToString(), user.Role_Utilisateur);
         return Ok(new { Token = token });
     }
+
+    
 }

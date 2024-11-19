@@ -1,5 +1,18 @@
 using Administration.Models;
 using Administration.Services;
+using Administration.Services.Auth;
+using Administration.Services.Client;
+using Administration.Services.Document;
+using Administration.Services.Employe;
+using Administration.Services.FactureAchat;
+using Administration.Services.FactureVente;
+using Administration.Services.Fournisseur;
+using Administration.Services.LigneFacture;
+using Administration.Services.Retenue;
+using Administration.Services.Service;
+using Administration.Services.Societe;
+using Administration.Services.TypeDocument;
+using Administration.Services.Utilisateur;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +24,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null; // Garde les noms exacts
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Variable de connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -30,6 +49,10 @@ builder.Services.AddTransient<IClient_Service, Client_Service>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddTransient<IFactureVente_Service, FactureVente_Service>();
 builder.Services.AddTransient<ILigneFactureService, LigneFactureService>();
+builder.Services.AddTransient<IFactureAchat_Service, FactureAchat_Service>();
+builder.Services.AddTransient<IRetenue_Service, Retenue_Service>();
+builder.Services.AddTransient<IDocument_Service, Document_Service>();
+builder.Services.AddTransient<ITypeDoc_Service, TypeDoc_Service>();
 
 builder.Services.AddCors();
 

@@ -1,7 +1,5 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers
@@ -17,7 +15,7 @@ namespace Administration.Controllers
             _service_Service = service_Service;
         }
 
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> GetAllServicesAsync()
         {
@@ -26,7 +24,8 @@ namespace Administration.Controllers
 
         }
 
-        [Authorize]
+        
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServiceByIdAsync(int id)
         {
@@ -45,41 +44,60 @@ namespace Administration.Controllers
             return Ok(service);
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+        
+
         [HttpPost]
         public async Task<IActionResult> CreateServiceAsync(ServiceDto serviceDto)
         {
             var service = new Service
             {
                 Designation_Service = serviceDto.Designation_Service,
-                PrixHT = serviceDto.PrixHT,
                 PrixTTC = serviceDto.PrixTTC,
                 TVA = serviceDto.TVA,
             };
 
-            await _service_Service.AddService(service);
-            return Ok(service);
+            var result = await _service_Service.AddService(service);
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+            return Ok($"Le Service : '{service.Designation_Service}' a été ajouté avec succès.");
+
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateServiceAsync(byte id, ServiceDto serviceDto)
+        public async Task<IActionResult> UpdateServiceAsync(int id, [FromBody] ServiceDto serviceDto)
         {
+            if (serviceDto == null)
+            {
+                return BadRequest("Service data is null.");
+            }
+
             var service = await _service_Service.GetServiceById(id);
             if (service == null)
             {
-                return NotFound(" Service Introuvable ");
+                return NotFound($"Service with ID {id} not found.");
             }
-            service.TVA = serviceDto.TVA;
-            service.Designation_Service = serviceDto.Designation_Service;
-            service.PrixHT = serviceDto.PrixHT;
-            service.PrixTTC = serviceDto.PrixTTC;
 
-            _service_Service.UpdateService(service);
-            return Ok(service);
+            
+            service.Designation_Service = serviceDto.Designation_Service;
+            service.PrixTTC = serviceDto.PrixTTC;
+            service.TVA = serviceDto.TVA;
+
+            var result = await _service_Service.UpdateService(service);
+            if (result.StartsWith("Erreur"))
+            {
+                return BadRequest(result);
+            }
+            return Ok($"Le Service : '{service.Designation_Service}' a été Modifié avec succès.");
+
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServiceAsync(byte id)
         {
@@ -88,8 +106,8 @@ namespace Administration.Controllers
             {
                 return NotFound("Service introuvale pour supprimer");
             }
-            _service_Service.DeleteService(service);
-            return Ok(service);
+            await _service_Service.DeleteService(service);
+            return Ok($"Le Service : '{service.Designation_Service}' a été supprimé avec succès.");
         }
 
     }

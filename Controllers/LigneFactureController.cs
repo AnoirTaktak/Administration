@@ -1,6 +1,6 @@
 ﻿using Administration.Dtos;
 using Administration.Models;
-using Administration.Services;
+using Administration.Services.LigneFacture;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Administration.Controllers
@@ -16,17 +16,19 @@ namespace Administration.Controllers
             _ligneFactureService = ligneFactureService;
         }
 
-        // Récupérer toutes les lignes de facture
+ 
+
         [HttpGet]
-        public async Task<IActionResult> GetAllLignesFacture()
+        public async Task<IActionResult> GetAllLignesFactureAsync()
         {
             var lignes = await _ligneFactureService.GetAllLignesFacture();
             return Ok(lignes);
         }
 
-        // Créer une ligne de facture
+        
+
         [HttpPost]
-        public async Task<IActionResult> CreateLignesFacture([FromBody] List<LigneFactureDto> lignesFactureDto)
+        public async Task<IActionResult> CreateLignesFactureAsync([FromBody] List<LigneFactureDto> lignesFactureDto)
         {
             if (lignesFactureDto == null || !lignesFactureDto.Any())
             {
@@ -41,9 +43,10 @@ namespace Administration.Controllers
             return Ok(lignesFactureDto);
         }
 
-        // Récupérer les lignes de facture par numéro de facture
-        [HttpGet("facture/{factureNumero}")]
-        public async Task<IActionResult> GetLignesByFacture(string factureNumero)
+       
+
+        [HttpGet("lignefactureNum/{factureNumero}")]
+        public async Task<IActionResult> GetLignesByFactureAsync(string factureNumero)
         {
             var lignes = await _ligneFactureService.GetLignesByFacture(factureNumero);
 
@@ -53,6 +56,43 @@ namespace Administration.Controllers
             }
 
             return Ok(lignes);
+        }
+
+
+        [HttpGet("lignefactureId/{factureid}")]
+        public async Task<IActionResult> GetLignesByFactureIdAsync(int factureid)
+        {
+            var lignes = await _ligneFactureService.GetLignesByFactureId(factureid);
+
+            if (lignes == null || !lignes.Any())
+            {
+                return NotFound($"No lignes found for facture {factureid}.");
+            }
+
+            return Ok(lignes);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateLigneFactureAsync(int id, [FromBody] LigneFactureDto ligneFactureDto)
+        {
+            if (ligneFactureDto == null)
+            {
+                return BadRequest("Ligne de facture data is null.");
+            }
+
+            try
+            {
+                var updatedLigne = await _ligneFactureService.UpdateLigneFacture(id, ligneFactureDto);
+                return Ok(updatedLigne);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }
