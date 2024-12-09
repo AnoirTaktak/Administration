@@ -78,7 +78,13 @@ namespace Administration.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<byte[]>("Doc_Pdf")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<int>("ID_Employe")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ID_Societe")
                         .HasColumnType("int");
 
                     b.Property<int>("ID_TypeDocument")

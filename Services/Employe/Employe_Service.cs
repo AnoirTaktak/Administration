@@ -51,11 +51,11 @@ namespace Administration.Services.Employe
                 return "Erreur: Le numéro de Cnss est déja utilisé '" + employe.CIN_Employe + "'.";
             }
             await _context.AddAsync(employe);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return "Employe ajouté avec succès.";
         }
 
-        public string UpdateEmploye(EmployeModel employe)
+        public async Task<string> UpdateEmploye(EmployeModel employe)
         {
             // Vérifier si le nom existe déjà
             if (_context.Employes.Any(e => e.Nom_Employe == employe.Nom_Employe && e.ID_Employe != employe.ID_Employe))
@@ -75,15 +75,15 @@ namespace Administration.Services.Employe
                 return "Erreur: Le numéro de Cnss est déja utilisé '" + employe.CIN_Employe + "'.";
             }
             _context.Update(employe);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return "Employe modifié avec succès.";
         }
 
-        public EmployeModel DeleteEmploye(EmployeModel employe)
+        public async Task<string> DeleteEmploye(EmployeModel employe)
         {
             _context.Remove(employe);
-            _context.SaveChanges();
-            return employe;
+            await _context.SaveChangesAsync();
+            return "Employe supprimé";
         }
 
         public async Task<IEnumerable<EmployeModel>> GetEmployeByNom(string nom)

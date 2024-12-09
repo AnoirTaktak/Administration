@@ -5,11 +5,18 @@ namespace Administration.Dtos
     public class DocumentDto
     {
         [Required]
-        public int ID_Employe { get; set; } // Identifiant de l'employé
+        public int ID_Employe { get; set; }
+
         [Required]
-        public int ID_TypeDocument { get; set; } // Identifiant du type de document
+        public int ID_TypeDocument { get; set; }
+
         [Required]
-        public DateTime Date { get; set; } // Date de création du document
-        public required string Contenu { get; set; } // Contenu du document
+        public int ID_Societe { get; set; }
+
+        public DateTime? Date { get; set; }
+        public string? Contenu { get; set; } // Contenu final
+
+        // Nouvelle propriété pour le fichier PDF
+        public IFormFile? Doc_Pdf { get; set; }
     }
 }

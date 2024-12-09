@@ -10,8 +10,8 @@ namespace Administration.Services.Employe
         Task<IEnumerable<EmployeModel>> GetAllEmployes();
         Task<EmployeModel> GetEmployeById(int id);
         Task<string> AddEmploye(EmployeModel employe);
-        string UpdateEmploye(EmployeModel employe);
-        EmployeModel DeleteEmploye(EmployeModel employe);
+        Task<string> UpdateEmploye(EmployeModel employe);
+        Task<string> DeleteEmploye(EmployeModel employe);
         Task<IEnumerable<EmployeModel>> GetEmployeByNom(string nom);
         Task<IEnumerable<EmployeModel>> GetEmployesByTypeContrat(TypeContrat typecontrat);
         Task<IEnumerable<EmployeModel>> GetEmployeByCin(string cin);

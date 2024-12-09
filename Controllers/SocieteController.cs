@@ -50,7 +50,7 @@ namespace Administration.Controllers
             {
                 return NotFound("Société introuvable.");
             }
-            var data = _mapper.Map<List<SocieteDto>>(societe);
+            var data = _mapper.Map<List<Societe>>(societe);
             return Ok(data);
         }
 
@@ -75,7 +75,7 @@ namespace Administration.Controllers
             {
                 return NotFound("Société introuvable.");
             }
-            var data = _mapper.Map<SocieteDto>(societe);
+            var data = _mapper.Map<Societe>(societe);
             return Ok(data);
         }
 

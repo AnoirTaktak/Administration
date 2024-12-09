@@ -39,7 +39,7 @@ namespace Administration.Controllers
 
 
         [HttpGet("nom/{nom}")]
-        public async Task<IActionResult> GetClientByNomAsync(string nom)
+        public async Task<IActionResult> GetEmployeByNomAsync(string nom)
         {
             var employes = await _employe_Service.GetEmployeByNom(nom);
             if (employes == null)
@@ -50,7 +50,7 @@ namespace Administration.Controllers
         }
 
         [HttpGet("cin/{cin}")]
-        public async Task<IActionResult> GetClientByCinAsync(string cin)
+        public async Task<IActionResult> GetEmployeByCinAsync(string cin)
         {
             var employes = await _employe_Service.GetEmployeByCin(cin);
             if (employes == null)
@@ -62,7 +62,7 @@ namespace Administration.Controllers
 
 
         [HttpGet("typecontrat/{tc}")]
-        public async Task<IActionResult> GetClientByTCAsync(TypeContrat tc)
+        public async Task<IActionResult> GetEmployeByTCAsync(TypeContrat tc)
         {
             var employes = await _employe_Service.GetEmployesByTypeContrat(tc);
             if (employes == null)
@@ -88,6 +88,7 @@ namespace Administration.Controllers
                 CIN_Employe = employeDto.CIN_Employe,
                 CNSS_Employe = employeDto.CNSS_Employe,
                 Poste_Employe = employeDto.Poste_Employe,
+                Tel_Employe = employeDto.Tel_Employe,
             };
 
             var result =  await _employe_Service.AddEmploye(employe);
@@ -98,7 +99,7 @@ namespace Administration.Controllers
                 return BadRequest(result);
             }
 
-            return Ok($"L'employee '{employe.Nom_Employe}' a été ajouté avec succès.");
+            return Ok();
         }
         
 
@@ -120,16 +121,11 @@ namespace Administration.Controllers
             employe.CIN_Employe = employeDto.CIN_Employe;
             employe.CNSS_Employe = employeDto.CNSS_Employe;
             employe.Poste_Employe = employeDto.Poste_Employe;
+            employe.Tel_Employe = employeDto.Tel_Employe;
+            
+            await _employe_Service.UpdateEmploye(employe);
 
-            var result = _employe_Service.UpdateEmploye(employe);
-
-            // Si un message d'erreur est retourné, renvoyer un code 400 avec le message d'erreur
-            if (result.StartsWith("Erreur"))
-            {
-                return BadRequest(result);
-            }
-
-            return Ok($"L'employee : '{employe.Nom_Employe}' a été modifié avec succès.");
+            return Ok();
         }
         
 
@@ -141,8 +137,9 @@ namespace Administration.Controllers
             {
                 return NotFound("Employé introuvable pour suppression");
             }
-            _employe_Service.DeleteEmploye(employe);
-            return Ok($"L'employee : '{employe.Nom_Employe}' a été supprimé avec succès.");
+             await _employe_Service.DeleteEmploye(employe);
+            
+            return Ok();
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Administration.Helpers
 
             CreateMap<SocieteDto, Societe>().ForMember(src => src.CachetSignature, opt => opt.Ignore());
 
+            CreateMap<Document, DocumentDto>()
+           .ForMember(dest => dest.Doc_Pdf, opt => opt.Ignore());
+
+            CreateMap<DocumentDto, Document>().ForMember(src => src.Doc_Pdf, opt => opt.Ignore());
+
         }
     }
 }

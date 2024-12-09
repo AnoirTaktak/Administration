@@ -139,6 +139,13 @@ app.UseHttpsRedirection();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
 app.UseAuthentication();  // Assurez-vous que cette ligne est avant UseAuthorization
 
 app.UseAuthorization();
