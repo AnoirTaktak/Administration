@@ -63,7 +63,7 @@ namespace Administration.Controllers
                 return BadRequest(result);
             }
 
-            return Ok($"Le fournisseur : '{frn.RaisonSociale_Fournisseur}' a été crée avec succès.");
+            return Ok();
         }
 
         [HttpPut("{id}")]
@@ -88,7 +88,7 @@ namespace Administration.Controllers
             {
                 return BadRequest(result);
             }
-            return Ok($"Le fournisseur : '{existingFournisseur.RaisonSociale_Fournisseur}' a été modifié avec succès.");
+            return Ok();
         }
 
 
@@ -103,7 +103,7 @@ namespace Administration.Controllers
             }
 
             _fournisseur_Service.DeleteFournisseur(fournisseur);
-            return Ok($"Le fournisseur : '{fournisseur.RaisonSociale_Fournisseur}' a été supprimé avec succès.");
+            return Ok();
         }
 
 
@@ -123,6 +123,17 @@ namespace Administration.Controllers
         public async Task<IActionResult> GetFournisseurByMFAsync(string mf)
         {
             var fournisseur = await _fournisseur_Service.GetFournisseurByMF(mf);
+            if (fournisseur == null)
+            {
+                return NotFound("Fournisseur introuvable");
+            }
+            return Ok(fournisseur);
+        }
+
+        [HttpGet("tf/{tf}")]
+        public async Task<IActionResult> GetFournisseurByTypeFourAsync(string tf)
+        {
+            var fournisseur = await _fournisseur_Service.GetFournisseurByTF(tf);
             if (fournisseur == null)
             {
                 return NotFound("Fournisseur introuvable");

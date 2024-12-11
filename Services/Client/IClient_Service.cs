@@ -14,5 +14,6 @@ namespace Administration.Services.Client
         ClientModel DeleteClient(ClientModel client); //effacer client
         Task<IEnumerable<ClientModel>> GetClientByRS(string rs); //recherche par raison social
         Task<IEnumerable<ClientModel>> GetClientByMF(string mf); //recherche mar matricule fiscal
+        Task<IEnumerable<ClientModel>> GetClientsByTypeClient(TypeClient typeClient);
     }
 }

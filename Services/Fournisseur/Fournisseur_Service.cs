@@ -91,5 +91,12 @@ namespace Administration.Services.Fournisseur
             
             return four;
         }
+
+        public async Task<IEnumerable<FournisseurModel>> GetFournisseurByTF(string tf)
+        {
+            var four = await _context.Fournisseurs.Where(f => f.Type_Fournisseur.Contains(tf)).ToListAsync();
+
+            return four;
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace Administration.Controllers
             var employes = await _employe_Service.GetEmployesByTypeContrat(tc);
             if (employes == null)
             {
-                return NotFound("Client introuvable");
+                return NotFound("Employe introuvable");
             }
             return Ok(employes);
         }

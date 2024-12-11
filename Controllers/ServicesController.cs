@@ -61,7 +61,7 @@ namespace Administration.Controllers
             {
                 return BadRequest(result);
             }
-            return Ok($"Le Service : '{service.Designation_Service}' a été ajouté avec succès.");
+            return Ok();
 
         }
 
@@ -91,7 +91,7 @@ namespace Administration.Controllers
             {
                 return BadRequest(result);
             }
-            return Ok($"Le Service : '{service.Designation_Service}' a été Modifié avec succès.");
+            return Ok();
 
         }
 
@@ -107,7 +107,7 @@ namespace Administration.Controllers
                 return NotFound("Service introuvale pour supprimer");
             }
             await _service_Service.DeleteService(service);
-            return Ok($"Le Service : '{service.Designation_Service}' a été supprimé avec succès.");
+            return Ok();
         }
 
     }

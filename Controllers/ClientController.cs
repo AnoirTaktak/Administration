@@ -62,7 +62,19 @@ namespace Administration.Controllers
         }
 
 
-        
+        [HttpGet("typeclient/{tc}")]
+        public async Task<IActionResult> GetClientByTCAsync(TypeClient tc)
+        {
+            var clients = await _client_Service.GetClientsByTypeClient(tc);
+            if (clients == null)
+            {
+                return NotFound("Client introuvable");
+            }
+            return Ok(clients);
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> CreateClientAsync(ClientDto clientDto)
         {
@@ -72,7 +84,8 @@ namespace Administration.Controllers
                 RS_Client = clientDto.RS_Client,
                 Adresse_Client = clientDto.Adresse_Client,
                 Tel_Client = clientDto.Tel_Client,
-                Type_Client = clientDto.Type_Client
+                Type_Client = clientDto.Type_Client,
+                Email_Client = clientDto.Email_Client
             };
 
             // Appel du service pour ajouter le client
@@ -85,7 +98,7 @@ namespace Administration.Controllers
             }
 
             // Sinon, renvoyer un code 201 pour succès
-            return Ok($"Client {client.RS_Client} crée avec succés");
+            return Ok();
         }
 
 
@@ -103,7 +116,8 @@ namespace Administration.Controllers
             client.MF_Client = clientDto.MF_Client;
             client.RS_Client = clientDto.RS_Client;
             client.Tel_Client = clientDto.Tel_Client;
-            client.Type_Client = clientDto.Type_Client; 
+            client.Type_Client = clientDto.Type_Client;
+            client.Email_Client = clientDto.Email_Client;
 
             var result = _client_Service.UpdateClient(client);
 
@@ -113,7 +127,7 @@ namespace Administration.Controllers
                 return BadRequest(result);
             }
 
-            return Ok($"Le client '{client.RS_Client}' a été Modifié avec succès.");
+            return Ok();
         }
 
 
@@ -127,7 +141,7 @@ namespace Administration.Controllers
                 return NotFound("Client introuvable pour suppression");
             }
             _client_Service.DeleteClient(client);
-            return Ok($"Le client '{client.RS_Client}' a été supprimé avec succès.");
+            return Ok();
         }
     }
 }

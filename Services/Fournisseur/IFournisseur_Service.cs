@@ -13,5 +13,6 @@ namespace Administration.Services.Fournisseur
         FournisseurModel DeleteFournisseur(FournisseurModel fournisseur);
         Task<IEnumerable<FournisseurModel>> GetFournisseurByRS(string rs);
         Task<IEnumerable<FournisseurModel>> GetFournisseurByMF(string mf);
+        Task<IEnumerable<FournisseurModel>> GetFournisseurByTF(string tf);
     }
 }

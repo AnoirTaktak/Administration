@@ -102,5 +102,12 @@ namespace Administration.Services.Client
             return clients;
         }
 
+        public async Task<IEnumerable<ClientModel>> GetClientsByTypeClient(TypeClient typeClient)
+        {
+            var clients = await _context.Clients.Where(e => e.Type_Client == typeClient).ToListAsync();
+
+            return clients;
+        }
+
     }
 }
