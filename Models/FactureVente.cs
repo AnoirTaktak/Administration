@@ -12,7 +12,8 @@ namespace Administration.Models
         public DateTime DateFacture { get; set; }
 
         public decimal Total_FactureVente { get; set; }
-
+        public decimal? Total_FactureVenteHT { get; set; }
+        public decimal? Remise { get; set; }
         public decimal TimbreFiscale  { get; set; }
 
         // Relations

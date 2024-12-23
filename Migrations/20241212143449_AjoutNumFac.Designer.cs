@@ -4,6 +4,7 @@ using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241212143449_AjoutNumFac")]
+    partial class AjoutNumFac
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,8 +169,8 @@ namespace Administration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_FactureAchat"));
 
-                    b.Property<DateOnly>("DateAchat")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateAchat")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("EtatPaiement")
                         .HasColumnType("bit");
@@ -208,16 +211,10 @@ namespace Administration.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Remise")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("TimbreFiscale")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Total_FactureVente")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Total_FactureVenteHT")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID_FactureVente");
@@ -296,8 +293,8 @@ namespace Administration.Migrations
                     b.Property<int>("ID_Service")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Quantite")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Quantite")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Total_LigneFV")
                         .HasColumnType("decimal(18,2)");

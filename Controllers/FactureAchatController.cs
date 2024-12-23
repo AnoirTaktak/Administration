@@ -26,7 +26,7 @@ namespace Administration.Controllers
         public async Task<IActionResult> GetAllFacturesAsync()
         {
             var factures = await _factureAchatService.GetAllFacturesAchat();
-            var data = _mapper.Map<IEnumerable<FactureAchatDto>>(factures);
+            var data = _mapper.Map<IEnumerable<FactureAchat>>(factures);
             return Ok(data);
         }
 
@@ -38,11 +38,11 @@ namespace Administration.Controllers
             {
                 return NotFound("Facture introuvable.");
             }
-            var data = _mapper.Map<FactureAchatDto>(facture);
+            var data = _mapper.Map<FactureAchat>(facture);
             return Ok(data);
         }
 
-        [HttpGet("by-fournisseur/{idFournisseur}")]
+        [HttpGet("byfournisseur/{idFournisseur}")]
         public async Task<IActionResult> GetFacturesByFournisseurAsync(int idFournisseur)
         {
             var factures = await _factureAchatService.GetFacturesAchatByFournisseur(idFournisseur);
@@ -51,7 +51,7 @@ namespace Administration.Controllers
                 return NotFound("Aucune facture d'achat trouvée pour ce fournisseur.");
             }
 
-            var data = _mapper.Map<IEnumerable<FactureAchatDto>>(factures);
+            var data = _mapper.Map<IEnumerable<FactureAchat>>(factures);
             return Ok(data);
         }
 
@@ -64,8 +64,26 @@ namespace Administration.Controllers
                 return NotFound("Aucune facture d'achat trouvée pour cet état.");
             }
 
-            var data = _mapper.Map<IEnumerable<FactureAchatDto>>(factures);
+            var data = _mapper.Map<IEnumerable<FactureAchat>>(factures);
             return Ok(data);
+        }
+
+        [HttpGet("ByDateRange")]
+        public async Task<IActionResult> GetFacturesByDateRange([FromQuery] DateOnly? startDate, [FromQuery] DateOnly? endDate)
+        {
+            if (!startDate.HasValue && !endDate.HasValue)
+                return BadRequest("Veuillez fournir au moins une date de début ou une date de fin.");
+
+            var factures = await _factureAchatService.GetFacturesByDateRangeAsync(startDate, endDate);
+            return Ok(factures);
+        }
+
+
+        [HttpGet("bynumfac")]
+        public async Task<IActionResult> GetFacturesByNumFacAsync(string nf)
+        {
+            var factures = await _factureAchatService.GetFacturesAchatByNumFac(nf);
+            return Ok(factures);
         }
 
 
@@ -102,7 +120,7 @@ namespace Administration.Controllers
                 return BadRequest(result);
             }
 
-            return Ok($"la facture id : {factureAchat.ID_Fournisseur} a été crée avec succés");
+            return Ok();
         }
 
         [HttpPut("{id}")]
@@ -133,7 +151,7 @@ namespace Administration.Controllers
             factureAchat.ID_Fournisseur = factureAchatDto.ID_Fournisseur;
 
             await _factureAchatService.UpdateFactureAchat(factureAchat);
-            return Ok($"la facture id : {factureAchat.ID_Fournisseur} a été modifié avec succés");
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -146,7 +164,7 @@ namespace Administration.Controllers
             }
 
             await _factureAchatService.DeleteFactureAchat(facture);
-            return Ok($"la facture id : {facture.ID_Fournisseur} a été supprimé avec succés");
+            return Ok();
         }
     }
 }

@@ -4,9 +4,12 @@ namespace Administration.Dtos
 {
     public class FactureAchatDto
     {
-     
+
         [Required]
-        public DateTime DateAchat { get; set; } // Date de la facture d'achat
+        public required string Numero_FactureAchat { get; set; }
+
+        [Required]
+        public DateOnly DateAchat { get; set; } // Date de la facture d'achat
 
         [Required]
         [Range(0, double.MaxValue)]

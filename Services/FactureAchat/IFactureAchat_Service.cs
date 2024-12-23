@@ -11,5 +11,7 @@ namespace Administration.Services.FactureAchat
         Task<FactureAchatModel> DeleteFactureAchat(FactureAchatModel factureAchat); // Supprimer une facture
         Task<IEnumerable<FactureAchatModel>> GetFacturesAchatByFournisseur(int fournisseurId); // Récupérer factures par fournisseur
         Task<IEnumerable<FactureAchatModel>> GetFacturesAchatByEtat(bool etatPaiement); // Récupérer factures par état (payé ou non)
+        Task<IEnumerable<FactureAchatModel>> GetFacturesByDateRangeAsync(DateOnly? startDate, DateOnly? endDate);
+        Task<IEnumerable<FactureAchatModel>> GetFacturesAchatByNumFac(string numfac);
     }
 }

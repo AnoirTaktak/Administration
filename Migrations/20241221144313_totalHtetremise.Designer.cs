@@ -4,6 +4,7 @@ using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241221144313_totalHtetremise")]
+    partial class totalHtetremise
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,8 +299,8 @@ namespace Administration.Migrations
                     b.Property<int>("ID_Service")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Quantite")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Quantite")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Total_LigneFV")
                         .HasColumnType("decimal(18,2)");

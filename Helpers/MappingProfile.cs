@@ -19,6 +19,11 @@ namespace Administration.Helpers
 
             CreateMap<DocumentDto, Document>().ForMember(src => src.Doc_Pdf, opt => opt.Ignore());
 
+            CreateMap<FactureAchat, FactureAchatDto>()
+            .ForMember(dest => dest.ImageFacture, opt => opt.Ignore());
+
+            CreateMap<FactureAchatDto, FactureAchat>().ForMember(src => src.ImageFacture, opt => opt.Ignore());
+
         }
     }
 }

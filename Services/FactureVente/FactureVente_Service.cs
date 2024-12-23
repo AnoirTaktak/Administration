@@ -112,7 +112,8 @@ namespace Administration.Services.FactureVente
 
         public async Task<FactureVenteModel> CreateFacture(FactureVenteDto factureDto)
         {
-            decimal totalFacture = 0;
+           
+
 
             // Générer le numéro de facture
             string numeroFacture = FactureVenteModel.GenerateNumeroFacture(_context);
@@ -122,15 +123,13 @@ namespace Administration.Services.FactureVente
             {
                 NumeroFacture = numeroFacture,  // Initialiser le numéro de facture
                 DateFacture = DateTime.Now,
-                Total_FactureVente = 0,
+                Remise = factureDto.Remise,
+                Total_FactureVente = factureDto.Total_FactureVente,
+                Total_FactureVenteHT = factureDto.Total_FactureVenteHT,
                 TimbreFiscale = factureDto.TimbreFiscale,
                 Client = await _context.Clients.Where(c => c.RS_Client == factureDto.Client.RS_Client).FirstAsync(), // Vérifier que le client existe
                 LignesFacture = new List<LigneFactureVenteModel>() // Initialiser les lignes de facture
             };
-
-            _context.FacturesVente.Add(facture);
-            await _context.SaveChangesAsync();
-
             foreach (var ligneDto in factureDto.LignesFacture)
             {
                 var ligneFacture = new LigneFactureVenteModel
@@ -145,14 +144,14 @@ namespace Administration.Services.FactureVente
                 facture.LignesFacture.Add(ligneFacture);
                 _context.LignesFacture.Add(ligneFacture);
 
-                totalFacture += ligneDto.Total_LigneFV;
+
             }
 
-            facture.Total_FactureVente = totalFacture + facture.TimbreFiscale;
-
-            _context.FacturesVente.Update(facture);
-            // Sauvegarder les lignes de facture avec l'ID_FactureVente associé
+            _context.FacturesVente.Add(facture);
             await _context.SaveChangesAsync();
+
+           
+    
 
             return facture;
         }

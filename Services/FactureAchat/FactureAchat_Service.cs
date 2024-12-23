@@ -31,6 +31,19 @@ namespace Administration.Services.FactureAchat
             return facture;
         }
 
+        public async Task<IEnumerable<FactureAchatModel>> GetFacturesByDateRangeAsync(DateOnly? startDate, DateOnly? endDate)
+        {
+            var query = _context.FacturesAchat.AsQueryable();
+
+            if (startDate.HasValue)
+                query = query.Where(f => f.DateAchat >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(f => f.DateAchat <= endDate.Value);
+
+            return await query.ToListAsync();
+        }
+
         public async Task<string> AddFactureAchat(FactureAchatModel factureAchat)
         {
             if (factureAchat.Montant <= 0)
@@ -75,5 +88,13 @@ namespace Administration.Services.FactureAchat
                 .Where(f => f.EtatPaiement == etatPaiement)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<FactureAchatModel>> GetFacturesAchatByNumFac(string numfac)
+        {
+            var fa = await _context.FacturesAchat.Where(e => e.Numero_FactureAchat.Contains(numfac)).ToListAsync();
+
+            return fa;
+        }
+        
     }
 }
