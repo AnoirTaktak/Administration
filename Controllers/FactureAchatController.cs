@@ -4,6 +4,7 @@ using Administration.Services.FactureAchat; // Assurez-vous d'importer le bon na
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administration.Controllers
 {
@@ -13,13 +14,15 @@ namespace Administration.Controllers
     {
         private readonly IFactureAchat_Service _factureAchatService; // Interface de service
         private readonly IMapper _mapper;
+        private readonly AppDBContext _context;
 
         private readonly List<string> _allowedExtensions = new List<string> { ".jpg", ".png", ".jpeg", ".pdf" };
 
-        public FactureAchatController(IFactureAchat_Service factureAchatService, IMapper mapper)
+        public FactureAchatController(IFactureAchat_Service factureAchatService, IMapper mapper, AppDBContext context)
         {
             _factureAchatService = factureAchatService;
             _mapper = mapper;
+            _context = context;
         }
 
         [HttpGet]
@@ -166,5 +169,49 @@ namespace Administration.Controllers
             await _factureAchatService.DeleteFactureAchat(facture);
             return Ok();
         }
+
+        [HttpGet("income-stats")]
+        public async Task<IActionResult> GetIncomeStats()
+        {
+            try
+            {
+                // Récupérer toutes les factures
+                var factures = await _context.FacturesAchat.ToListAsync();
+
+                // Obtenir les totaux pour le mois en cours
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+
+                var currentMonthTotal = factures
+                    .Where(f => f.DateAchat.Month == currentMonth && f.DateAchat.Year == currentYear)
+                    .Sum(f => f.Montant);
+
+                // Obtenir les totaux pour le mois précédent
+                var lastMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+                var lastMonthYear = currentMonth == 1 ? currentYear - 1 : currentYear;
+
+                var lastMonthTotal = factures
+                    .Where(f => f.DateAchat.Month == lastMonth && f.DateAchat.Year == lastMonthYear)
+                    .Sum(f => f.Montant);
+
+                // Calculer la progression en pourcentage
+                decimal progressionPercentage = lastMonthTotal > 0
+                    ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
+                    : 100; // Si aucune donnée le mois dernier, afficher 100% de progression
+
+                // Retourner les données
+                return Ok(new
+                {
+                    currentMonthTotal,
+                    progressionPercentage
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Une erreur est survenue.", details = ex.Message });
+            }
+        }
+
+
     }
 }

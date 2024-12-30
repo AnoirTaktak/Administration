@@ -18,10 +18,10 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        var user = await _userService.Authenticate(loginDto.Email, loginDto.Password);
+        var user = await _userService.Authenticate(loginDto.Pseudo, loginDto.Password);
         if (user == null) return Unauthorized("Invalid credentials");
 
-        var token = _authService.GenerateToken(user.ID_Utilisateur.ToString(), user.Role_Utilisateur);
+        var token = _authService.GenerateToken(user.ID_Utilisateur.ToString(), user.Role_Utilisateur.ToString());
         return Ok(new { Token = token });
     }
 

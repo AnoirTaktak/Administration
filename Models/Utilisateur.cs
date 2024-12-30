@@ -2,9 +2,15 @@
 
 namespace Administration.Models
 {
+    public enum Role
+    {
+        SuperAdmin,
+        Admin,
+        User
+    }
+
     public class Utilisateur
     {
-      
         [Key]
         public int ID_Utilisateur { get; set; }
 
@@ -24,6 +30,6 @@ namespace Administration.Models
         public required string MotDePasse_Utilisateur { get; set; }
 
         [Required]
-        public required string Role_Utilisateur { get; set; } 
+        public Role Role_Utilisateur { get; set; }
     }
 }

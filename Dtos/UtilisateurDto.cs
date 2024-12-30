@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Administration.Models;
+using System.ComponentModel.DataAnnotations;
 using static Administration.Models.Utilisateur;
 
 namespace Administration.Dtos
@@ -21,6 +22,6 @@ namespace Administration.Dtos
         public required string MotDePasse_Utilisateur { get; set; }
 
         [Required]
-        public required string Role_Utilisateur { get; set; }
+        public Role Role_Utilisateur { get; set; } // Change to Role
     }
 }

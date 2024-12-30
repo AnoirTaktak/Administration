@@ -62,16 +62,16 @@ namespace Administration.Services.Utilisateur
 
             utilisateur.MotDePasse_Utilisateur = BCrypt.Net.BCrypt.HashPassword(utilisateur.MotDePasse_Utilisateur);
 
-            _context.Update(utilisateur);
-            _context.SaveChanges();
+             _context.Update(utilisateur);
+            await _context.SaveChangesAsync();
             return "Utilisateur modifié avec succès.";
         }
 
-        public UtilisateurModel DeleteUtilisateur(UtilisateurModel utilisateur)
+        public async Task<string> DeleteUtilisateur(UtilisateurModel utilisateur)
         {
-            _context.Remove(utilisateur);
-            _context.SaveChanges();
-            return utilisateur;
+           _context.Remove(utilisateur);
+           _context.SaveChanges();
+            return "utilisateur effacé avec succes";
         }
 
         public async Task<UtilisateurModel> GetUtilisateurByUsername(string username)

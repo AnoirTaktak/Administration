@@ -12,7 +12,7 @@ namespace Administration.Services.Utilisateur
         Task<UtilisateurModel> GetUtilisateurById(int id);
         Task<string> AddUtilisateur(UtilisateurModel utilisateur);
         Task<string> UpdateUtilisateur(UtilisateurModel utilisateur);
-        UtilisateurModel DeleteUtilisateur(UtilisateurModel utilisateur);
+        Task<string> DeleteUtilisateur(UtilisateurModel utilisateur);
         Task<UtilisateurModel> GetUtilisateurByUsername(string username);
         Task<UtilisateurModel> Authenticate(string pseudo, string password);
     }

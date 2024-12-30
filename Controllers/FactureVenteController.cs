@@ -10,10 +10,12 @@ namespace Administration.Controllers
     public class FactureVenteController : ControllerBase
     {
         private readonly IFactureVente_Service _factureVenteService;
+        private readonly AppDBContext _context;
 
-        public FactureVenteController(IFactureVente_Service factureVenteService)
+        public FactureVenteController(IFactureVente_Service factureVenteService, AppDBContext context)
         {
             _factureVenteService = factureVenteService;
+            _context = context;
         }
 
         [HttpGet]
@@ -51,5 +53,28 @@ namespace Administration.Controllers
             var facture = await _factureVenteService.CreateFacture(factureVenteDto);
             return CreatedAtAction(nameof(GetFactureByNumero), new { numeroFacture = facture.NumeroFacture }, facture);
         }
+
+        [HttpGet("income-stats")]
+        public IActionResult GetIncomeStats()
+        {
+            var currentMonthTotal = _context.FacturesVente
+                .Where(f => f.DateFacture.Month == DateTime.Now.Month && f.DateFacture.Year == DateTime.Now.Year)
+                .Sum(f => f.Total_FactureVente);
+
+            var lastMonthTotal = _context.FacturesVente
+                .Where(f => f.DateFacture.Month == DateTime.Now.AddMonths(-1).Month && f.DateFacture.Year == DateTime.Now.Year)
+                .Sum(f => f.Total_FactureVente);
+
+            var progressPercentage = lastMonthTotal > 0
+                ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
+                : 100;
+
+            return Ok(new
+            {
+                currentMonthTotal,
+                progressPercentage
+            });
+        }
+
     }
 }

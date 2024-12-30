@@ -54,11 +54,12 @@ namespace Administration.Controllers
                 Role_Utilisateur = utilisateurDto.Role_Utilisateur
             };
 
-            await _utilisateurService.AddUtilisateur(utilisateur);
-            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été ajouté avec succès.");
+             var rep = await _utilisateurService.AddUtilisateur(utilisateur);
+            if(rep!=null) return Ok();
+            return Ok();
         }
 
-        [Authorize]
+      
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUtilisateurAsync(int id, UtilisateurDto utilisateurDto)
         {
@@ -74,11 +75,11 @@ namespace Administration.Controllers
             utilisateur.MotDePasse_Utilisateur = utilisateurDto.MotDePasse_Utilisateur;
             utilisateur.Role_Utilisateur = utilisateurDto.Role_Utilisateur;
 
-            _utilisateurService.UpdateUtilisateur(utilisateur);
-            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été modifié avec succès.");
+            await _utilisateurService.UpdateUtilisateur(utilisateur);
+            return Ok();
         }
 
-        [Authorize(Roles = "Admin, SuperAdmin")]
+    
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUtilisateurAsync(int id)
         {
@@ -88,8 +89,8 @@ namespace Administration.Controllers
                 return NotFound("Utilisateur introuvable.");
             }
 
-            _utilisateurService.DeleteUtilisateur(utilisateur);
-            return Ok($"Utilisateur : '{utilisateur.Nom_Utilisateur}' a été supprimé avec succès.");
+            await _utilisateurService.DeleteUtilisateur(utilisateur);
+            return Ok();
 
         }
 
@@ -119,7 +120,7 @@ namespace Administration.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.Sub, utilisateur.Nom_Utilisateur),
                 new Claim(JwtRegisteredClaimNames.Email, utilisateur.Email_Utilisateur),
-                new Claim(ClaimTypes.Role, utilisateur.Role_Utilisateur),
+                new Claim(ClaimTypes.Role, utilisateur.Role_Utilisateur.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -133,5 +134,7 @@ namespace Administration.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        
     }
 }
