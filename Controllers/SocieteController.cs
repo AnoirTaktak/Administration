@@ -15,7 +15,7 @@ namespace Administration.Controllers
         private readonly ISociete_Service _societe_Service;
         private readonly IMapper _mapper;
 
-        private new List<string> _allowedExtensions = new List<string> { ".jpg", ".png", ".jpeg", ".pdf" };
+        private new List<string> _allowedExtensions = new List<string> { ".jpg", ".png", ".jpeg" };
 
         public SocieteController(ISociete_Service societe_Service,IMapper mapper)
         {
@@ -122,6 +122,7 @@ namespace Administration.Controllers
                 return BadRequest("no data id");
             }
 
+            // Si une image (CachetSignature) est fournie, mettez à jour l'image
             if (societeDto.CachetSignature != null)
             {
                 if (!string.IsNullOrEmpty(societeDto.CachetSignature?.FileName) &&
@@ -130,26 +131,37 @@ namespace Administration.Controllers
                     return BadRequest("seulement jpg ou png");
                 }
 
+                // Si l'image est valide, la convertir en tableau d'octets
                 using var datastream = new MemoryStream();
                 await societeDto.CachetSignature.CopyToAsync(datastream);
-                societe.CachetSignature = datastream.ToArray();
+                societe.CachetSignature = datastream.ToArray(); // Mise à jour de l'image
+            }
+            else
+            {
+                // Si aucune image n'est envoyée, ne touchez pas à l'image existante
+                // En d'autres termes, gardez l'image actuelle intacte
+                // societe.CachetSignature reste inchangé si societeDto.CachetSignature est null
             }
 
+            // Vérification de l'existence de la société avant de la mettre à jour
             if (societe == null)
             {
                 return NotFound("Société introuvable.");
             }
 
-            // Met à jour les autres propriétés
+            // Met à jour les autres propriétés, indépendamment de l'image
             societe.MF_Societe = societeDto.MF_Societe;
             societe.RaisonSociale_Societe = societeDto.RaisonSociale_Societe;
             societe.Adresse_Societe = societeDto.Adresse_Societe;
             societe.Tel_Societe = societeDto.Tel_Societe;
             societe.CodePostal = societeDto.CodePostal;
+            societe.Email_Societe = societeDto.Email_Societe;
 
+            // Mise à jour de la société dans la base de données
             await _societe_Service.UpdateSociete(societe);
-            return Ok($"La societe {societe.RaisonSociale_Societe} a été modifiée ");
+            return Ok();
         }
+
 
 
 

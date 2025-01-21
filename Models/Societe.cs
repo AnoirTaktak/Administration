@@ -34,7 +34,6 @@ namespace Administration.Models
         public required string CodePostal { get; set; }
 
 
-        [Required]
-        public required byte[] CachetSignature { get; set; }
+        public required byte[]? CachetSignature { get; set; }
     }
 }

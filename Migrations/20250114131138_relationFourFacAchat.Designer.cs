@@ -4,6 +4,7 @@ using Administration.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250114131138_relationFourFacAchat")]
+    partial class relationFourFacAchat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,6 +175,9 @@ namespace Administration.Migrations
                     b.Property<bool>("EtatPaiement")
                         .HasColumnType("bit");
 
+                    b.Property<int>("FournisseurID_Fournisseur")
+                        .HasColumnType("int");
+
                     b.Property<int>("ID_Fournisseur")
                         .HasColumnType("int");
 
@@ -186,6 +192,8 @@ namespace Administration.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_FactureAchat");
+
+                    b.HasIndex("FournisseurID_Fournisseur");
 
                     b.ToTable("FacturesAchat");
                 });
@@ -378,6 +386,7 @@ namespace Administration.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<byte[]>("CachetSignature")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("CodePostal")
@@ -665,6 +674,17 @@ namespace Administration.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Administration.Models.FactureAchat", b =>
+                {
+                    b.HasOne("Administration.Models.Fournisseur", "Fournisseur")
+                        .WithMany()
+                        .HasForeignKey("FournisseurID_Fournisseur")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fournisseur");
                 });
 
             modelBuilder.Entity("Administration.Models.FactureVente", b =>

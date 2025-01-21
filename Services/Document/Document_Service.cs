@@ -2,6 +2,7 @@
 using Administration.Models;
 using Administration.Services.Document;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Reflection.Metadata;
 using DocumentModel = Administration.Models.Document; // Création de l'alias
 
@@ -36,8 +37,8 @@ namespace Administration.Services
                 .Replace("{Matricule_Fiscal}", societe.MF_Societe)
                 .Replace("{CIN_Employe}", employe.CIN_Employe)
                 .Replace("{CNSS_Employe}", employe.CNSS_Employe)
-                .Replace("{DateDebut}", employe.DateDebut.ToString())
-                .Replace("{DateFin}", employe.DateFin.ToString())
+                .Replace("{DateDebut}", employe.DateDebut.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
+                .Replace("{DateFin}", employe.DateFin?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
                 .Replace("{TypeContrat}", employe.TypeContrat.ToString())
                 .Replace("{Nom_Employe}", employe.Nom_Employe)
                 .Replace("{Date}", DateTime.Now.ToString("dd/MM/yyyy"));
@@ -73,8 +74,8 @@ namespace Administration.Services
                 .Replace("{Matricule_Fiscal}", societe.MF_Societe)
                 .Replace("{CIN_Employe},", employe.CIN_Employe)
                 .Replace("{CNSS_Employe}", employe.CNSS_Employe)
-                .Replace("{DateDebut}", employe.DateDebut.ToString())
-                .Replace("{DateFin}", employe.DateFin.ToString())
+                .Replace("{DateDebut}", employe.DateDebut.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
+                .Replace("{DateFin}", employe.DateFin?.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
                 .Replace("{TypeContrat}", employe.TypeContrat.ToString())
                 .Replace("{Nom_Employe}", employe.Nom_Employe)
                 .Replace("{Date}", DateTime.Now.ToString("dd/MM/yyyy"));

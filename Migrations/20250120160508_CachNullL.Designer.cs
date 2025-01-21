@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Administration.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241009090917_AmeliorationFournisseur")]
-    partial class AmeliorationFournisseur
+    [Migration("20250120160508_CachNullL")]
+    partial class CachNullL
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace Administration.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Email_Client")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MF_Client")
                         .IsRequired()
@@ -64,6 +68,38 @@ namespace Administration.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Administration.Models.Document", b =>
+                {
+                    b.Property<int>("ID_Document")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_Document"));
+
+                    b.Property<string>("Contenu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Doc_Pdf")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ID_Employe")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ID_Societe")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ID_TypeDocument")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID_Document");
+
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Administration.Models.Employe", b =>
@@ -125,6 +161,38 @@ namespace Administration.Migrations
                     b.ToTable("Employes");
                 });
 
+            modelBuilder.Entity("Administration.Models.FactureAchat", b =>
+                {
+                    b.Property<int>("ID_FactureAchat")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_FactureAchat"));
+
+                    b.Property<DateOnly>("DateAchat")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("EtatPaiement")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ID_Fournisseur")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("ImageFacture")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<decimal>("Montant")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Numero_FactureAchat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID_FactureAchat");
+
+                    b.ToTable("FacturesAchat");
+                });
+
             modelBuilder.Entity("Administration.Models.FactureVente", b =>
                 {
                     b.Property<int>("ID_FactureVente")
@@ -143,10 +211,16 @@ namespace Administration.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("Remise")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TimbreFiscale")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Total_FactureVente")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Total_FactureVenteHT")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID_FactureVente");
@@ -225,10 +299,13 @@ namespace Administration.Migrations
                     b.Property<int>("ID_Service")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantite")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Quantite")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Total_LigneFV")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total_LigneHT")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID_LigneFV");
@@ -236,6 +313,34 @@ namespace Administration.Migrations
                     b.HasIndex("FactureVenteID_FactureVente");
 
                     b.ToTable("LignesFacture");
+                });
+
+            modelBuilder.Entity("Administration.Models.Retenue", b =>
+                {
+                    b.Property<int>("ID_Retenue")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_Retenue"));
+
+                    b.Property<string>("Categorie")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FactureAchatID_FactureAchat")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ID_FactureAchat")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Taux")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID_Retenue");
+
+                    b.HasIndex("FactureAchatID_FactureAchat");
+
+                    b.ToTable("Retenues");
                 });
 
             modelBuilder.Entity("Administration.Models.Service", b =>
@@ -250,9 +355,6 @@ namespace Administration.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("PrixHT")
-                        .HasColumnType("decimal(18,3)");
 
                     b.Property<decimal>("PrixTTC")
                         .HasColumnType("decimal(18,3)");
@@ -278,37 +380,54 @@ namespace Administration.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<byte[]>("Cachet")
-                        .IsRequired()
+                    b.Property<byte[]>("CachetSignature")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("CodePostal")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email_Societe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MF_Societe")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RaisonSociale_Societe")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<byte[]>("Signature")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("Tel_Societe")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID_Societe");
 
                     b.ToTable("Societes");
+                });
+
+            modelBuilder.Entity("Administration.Models.TypeDocument", b =>
+                {
+                    b.Property<int>("ID_TypeDocument")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_TypeDocument"));
+
+                    b.Property<string>("NomType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID_TypeDocument");
+
+                    b.ToTable("TypesDocuments");
                 });
 
             modelBuilder.Entity("Administration.Models.Utilisateur", b =>
@@ -321,7 +440,7 @@ namespace Administration.Migrations
 
                     b.Property<string>("Email_Utilisateur")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MotDePasse_Utilisateur")
                         .IsRequired()
@@ -332,11 +451,23 @@ namespace Administration.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Role_Utilisateur")
+                    b.Property<string>("Pseudo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Role_Utilisateur")
+                        .HasColumnType("int");
 
                     b.HasKey("ID_Utilisateur");
+
+                    b.HasIndex("Email_Utilisateur")
+                        .IsUnique();
+
+                    b.HasIndex("Nom_Utilisateur")
+                        .IsUnique();
+
+                    b.HasIndex("Pseudo")
+                        .IsUnique();
 
                     b.ToTable("Utilisateurs");
                 });
@@ -555,6 +686,15 @@ namespace Administration.Migrations
                     b.HasOne("Administration.Models.FactureVente", null)
                         .WithMany("LignesFacture")
                         .HasForeignKey("FactureVenteID_FactureVente");
+                });
+
+            modelBuilder.Entity("Administration.Models.Retenue", b =>
+                {
+                    b.HasOne("Administration.Models.FactureAchat", "FactureAchat")
+                        .WithMany()
+                        .HasForeignKey("FactureAchatID_FactureAchat");
+
+                    b.Navigation("FactureAchat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

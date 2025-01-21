@@ -137,7 +137,8 @@ namespace Administration.Services.FactureVente
                     ID_Service = ligneDto.ID_Service,
                     Quantite = ligneDto.Quantite,
                     Total_LigneFV = ligneDto.Total_LigneFV,
-                    ID_FactureVente = facture.ID_FactureVente  // Associer l'ID de la facture
+                    ID_FactureVente = facture.ID_FactureVente,  // Associer l'ID de la facture
+                    Total_LigneHT = ligneDto.Total_LigneHT
                 };
 
                 // Ajouter chaque ligne à la facture

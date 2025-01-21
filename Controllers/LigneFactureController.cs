@@ -2,6 +2,7 @@
 using Administration.Models;
 using Administration.Services.LigneFacture;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administration.Controllers
 {
@@ -10,13 +11,15 @@ namespace Administration.Controllers
     public class LigneFactureController : ControllerBase
     {
         private readonly ILigneFactureService _ligneFactureService;
+        private readonly AppDBContext _context;
 
-        public LigneFactureController(ILigneFactureService ligneFactureService)
+        public LigneFactureController(ILigneFactureService ligneFactureService, AppDBContext context)
         {
             _ligneFactureService = ligneFactureService;
+            _context = context;
         }
 
- 
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllLignesFactureAsync()
@@ -25,7 +28,7 @@ namespace Administration.Controllers
             return Ok(lignes);
         }
 
-        
+
 
         [HttpPost]
         public async Task<IActionResult> CreateLignesFactureAsync([FromBody] List<LigneFactureDto> lignesFactureDto)
@@ -40,10 +43,10 @@ namespace Administration.Controllers
                 await _ligneFactureService.CreateLigneFacture(ligneFactureDto);
             }
 
-            return Ok(lignesFactureDto);
+            return Ok();
         }
 
-       
+
 
         [HttpGet("lignefactureNum/{factureNumero}")]
         public async Task<IActionResult> GetLignesByFactureAsync(string factureNumero)
@@ -94,5 +97,32 @@ namespace Administration.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("top-services")]
+        public async Task<IActionResult> GetTopServices()
+        {
+            try
+            {
+                var topServices = await (
+                    from ligne in _context.LignesFacture
+                    join service in _context.Services on ligne.ID_Service equals service.ID_Service
+                    group ligne by new { ligne.ID_Service, service.Designation_Service, service.PrixTTC } into grouped
+                    orderby grouped.Sum(l => l.Quantite) descending
+                    select new
+                    {
+                        ServiceName = grouped.Key.Designation_Service,
+                        TotalSold = grouped.Sum(l => l.Quantite),
+                        Price = grouped.Key.PrixTTC
+                    }
+                ).Take(3).ToListAsync();
+
+                return Ok(topServices);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Erreur lors de la récupération des services populaires.", Details = ex.Message });
+            }
+        }
+
+
     }
 }

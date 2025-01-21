@@ -39,11 +39,7 @@ namespace Administration.Services.LigneFacture
                 throw new ArgumentException("Quantity must be greater than 0.");
             }
 
-            // Calcul du total TTC de la ligne (PrixTTC * Quantité)
-            var totalLigneTTC = service.PrixTTC * ligneFactureDto.Quantite;
-
-            // Calcul du total HT à partir du total TTC et du taux de TVA du service
-            var totalLigneHT = totalLigneTTC / (1 + service.TVA / 100);
+           
 
 
             var ligneFacture = new LigneFactureVenteModel
@@ -51,8 +47,8 @@ namespace Administration.Services.LigneFacture
                 ID_Service = ligneFactureDto.ID_Service,
                 Quantite = ligneFactureDto.Quantite,
                 ID_FactureVente = ligneFactureDto.ID_FactureVente,
-                Total_LigneFV = totalLigneTTC,
-                Total_LigneHT = totalLigneHT
+                Total_LigneFV = ligneFactureDto.Total_LigneFV,
+                Total_LigneHT = ligneFactureDto.Total_LigneHT
             };
 
 

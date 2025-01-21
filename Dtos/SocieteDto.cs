@@ -29,7 +29,7 @@ namespace Administration.Dtos
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Le code postal doit comporter exactement 4 chiffres exemple : 1234.")]
         public required string CodePostal { get; set; }
 
-        [Required]
+       
         public IFormFile? CachetSignature { get; set; } // Cachet (stocké sous forme de tableau d'octets)
   
 

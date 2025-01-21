@@ -5,7 +5,7 @@
 namespace Administration.Migrations
 {
     /// <inheritdoc />
-    public partial class AmeliorationFournisseur : Migration
+    public partial class CachNull : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

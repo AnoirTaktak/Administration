@@ -50,7 +50,7 @@ namespace Administration.Services.FactureAchat
             {
                 return "Erreur: Le montant doit être supérieur à zéro.";
             }
-
+      
             await _context.AddAsync(factureAchat);
             await _context.SaveChangesAsync();
             return "Facture d'achat ajoutée avec succès.";

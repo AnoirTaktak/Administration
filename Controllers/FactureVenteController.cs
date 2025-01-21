@@ -2,6 +2,7 @@
 using Administration.Models;
 using Administration.Services.FactureVente;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Administration.Controllers
 {
@@ -74,6 +75,42 @@ namespace Administration.Controllers
                 currentMonthTotal,
                 progressPercentage
             });
+        }
+
+        [HttpGet("total-ventes-last-five-months")]
+        public async Task<IActionResult> GetTotalVentesLastFiveMonths()
+        {
+            try
+            {
+                var result = await _context.FacturesVente
+                    .Where(f => f.DateFacture >= DateTime.Now.AddMonths(-5)) // Filtrer les 5 derniers mois
+                    .GroupBy(f => new { f.DateFacture.Year, f.DateFacture.Month }) // Grouper par année et mois
+                    .Select(g => new
+                    {
+                        Month = g.Key.Month,
+                        Year = g.Key.Year,
+                        Total = g.Sum(f => f.Total_FactureVente) // Totaliser les factures par groupe
+                    })
+                    .OrderBy(g => g.Year).ThenBy(g => g.Month) // Trier par année puis mois
+                    .ToListAsync();
+
+                // Construire un tableau des totaux dans l'ordre chronologique
+                var totals = result
+                    .Select(r => r.Total)
+                    .ToList();
+
+                // Remplir les mois manquants avec des totaux de 0
+                for (int i = 5; i > result.Count; i--)
+                {
+                    totals.Insert(0, 0);
+                }
+
+                return Ok(totals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Erreur lors de la récupération des totaux de vente.", Details = ex.Message });
+            }
         }
 
     }

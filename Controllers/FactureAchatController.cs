@@ -171,46 +171,55 @@ namespace Administration.Controllers
         }
 
         [HttpGet("income-stats")]
-        public async Task<IActionResult> GetIncomeStats()
+        public IActionResult GetIncomeStats()
         {
-            try
+            var currentMonthTotal = _context.FacturesAchat
+                .Where(f => f.DateAchat.Month == DateTime.Now.Month && f.DateAchat.Year == DateTime.Now.Year)
+                .Sum(f => f.Montant);
+
+            var lastMonthTotal = _context.FacturesAchat
+                .Where(f => f.DateAchat.Month == DateTime.Now.AddMonths(-1).Month && f.DateAchat.Year == DateTime.Now.Year)
+                .Sum(f => f.Montant);
+
+            var progressPercentage = lastMonthTotal > 0
+                ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
+                : 100;
+
+            return Ok(new
             {
-                // Récupérer toutes les factures
-                var factures = await _context.FacturesAchat.ToListAsync();
-
-                // Obtenir les totaux pour le mois en cours
-                var currentMonth = DateTime.Now.Month;
-                var currentYear = DateTime.Now.Year;
-
-                var currentMonthTotal = factures
-                    .Where(f => f.DateAchat.Month == currentMonth && f.DateAchat.Year == currentYear)
-                    .Sum(f => f.Montant);
-
-                // Obtenir les totaux pour le mois précédent
-                var lastMonth = currentMonth == 1 ? 12 : currentMonth - 1;
-                var lastMonthYear = currentMonth == 1 ? currentYear - 1 : currentYear;
-
-                var lastMonthTotal = factures
-                    .Where(f => f.DateAchat.Month == lastMonth && f.DateAchat.Year == lastMonthYear)
-                    .Sum(f => f.Montant);
-
-                // Calculer la progression en pourcentage
-                decimal progressionPercentage = lastMonthTotal > 0
-                    ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
-                    : 100; // Si aucune donnée le mois dernier, afficher 100% de progression
-
-                // Retourner les données
-                return Ok(new
-                {
-                    currentMonthTotal,
-                    progressionPercentage
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Une erreur est survenue.", details = ex.Message });
-            }
+                currentMonthTotal,
+                progressPercentage
+            });
         }
+
+        [HttpGet("total-achats-last-five-months")]
+        public IActionResult GetTotalAchatsLastFiveMonths()
+        {
+            var currentDate = DateTime.Now;
+
+            // Récupérer les totaux des 5 derniers mois
+            var lastFiveMonthsTotals = _context.FacturesAchat
+                .Where(f => f.DateAchat.Month >= currentDate.AddMonths(-5).Month && f.DateAchat.Year >= currentDate.AddMonths(-5).Year)
+                .GroupBy(f => new { f.DateAchat.Month, f.DateAchat.Year })
+                .Select(g => new
+                {
+                    Month = g.Key.Month,
+                    Year = g.Key.Year,
+                    Total = g.Sum(f => f.Montant)
+                })
+                .OrderByDescending(g => g.Year)
+                .ThenByDescending(g => g.Month)
+                .Take(5)
+                .ToList();
+
+          
+
+            // Renvoyer les totaux des 5 derniers mois
+            var monthlyTotals = lastFiveMonthsTotals.Select(x => x.Total).ToArray();
+            return Ok(monthlyTotals);
+        }
+
+
 
 
     }
